@@ -5,7 +5,6 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { isBrowser } from '@/lib/utils'
 import dynamic from 'next/dynamic'
-import Script from 'next/script'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
 import { createContext, useContext, useEffect, useRef } from 'react'
@@ -120,22 +119,49 @@ const LayoutBase = props => {
         {/* 搜索框 */}
         <AlgoliaSearchModal cRef={searchModal} {...props} />
 
-        {/* translate.js 翻译功能 */}
-        <Script
-          src="https://cdn.staticfile.net/translate.js/3.15.6/translate.min.js"
-          strategy="afterInteractive"
-          onLoad={() => {
-            if (typeof translate !== 'undefined') {
-              translate.service.use('siliconflow')
-              // 隐藏默认的翻译按钮，使用自定义按钮
-              translate.selectLanguageTag.show = false
-              translate.execute()
-            }
-          }}
-        />
+        {/* translate.js 翻译功能 - 动态加载 */}
+        <TranslateLoader />
       </div>
     </ThemeGlobalSimple.Provider>
   )
+}
+
+/**
+ * translate.js 加载器组件
+ */
+const TranslateLoader = () => {
+  useEffect(() => {
+    // 动态加载 translate.js
+    const script = document.createElement('script')
+    script.src = 'https://cdn.staticfile.net/translate.js/3.15.6/translate.min.js'
+    script.async = true
+    script.onload = () => {
+      if (typeof translate !== 'undefined') {
+        // 设置翻译服务
+        translate.service.use('siliconflow')
+        // 隐藏默认的翻译按钮
+        translate.selectLanguageTag.show = false
+        // 初始化翻译
+        translate.execute()
+        // 挂载到 window
+        window.translate = translate
+        console.log('translate.js 加载完成')
+      }
+    }
+    script.onerror = () => {
+      console.error('translate.js 加载失败')
+    }
+    document.body.appendChild(script)
+
+    return () => {
+      // 清理
+      if (script.parentNode) {
+        script.parentNode.removeChild(script)
+      }
+    }
+  }, [])
+
+  return null
 }
 
 /**

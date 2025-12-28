@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react'
 const TranslateButton = ({ className }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [currentLang, setCurrentLang] = useState('原文')
+    const [isReady, setIsReady] = useState(false)
     const dropdownRef = useRef(null)
 
     const languages = [
@@ -21,6 +22,26 @@ const TranslateButton = ({ className }) => {
         { code: 'russian', name: 'Русский' }
     ]
 
+    // 检查 translate.js 是否加载完成
+    useEffect(() => {
+        const checkTranslate = () => {
+            if (typeof window !== 'undefined' && typeof window.translate !== 'undefined') {
+                setIsReady(true)
+            }
+        }
+
+        // 立即检查一次
+        checkTranslate()
+
+        // 设置定时器定期检查
+        const interval = setInterval(checkTranslate, 500)
+
+        // 3秒后停止检查
+        setTimeout(() => clearInterval(interval), 3000)
+
+        return () => clearInterval(interval)
+    }, [])
+
     // 点击外部关闭下拉菜单
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -33,15 +54,17 @@ const TranslateButton = ({ className }) => {
     }, [])
 
     const handleTranslate = (langCode, langName) => {
-        if (typeof translate !== 'undefined') {
+        if (typeof window !== 'undefined' && typeof window.translate !== 'undefined') {
             if (langCode === 'original') {
-                // 恢复原文 - 刷新页面恢复
+                // 恢复原文 - 刷新页面
                 window.location.reload()
             } else {
-                // 翻译到指定语言 - 使用 translate.changeLanguage
-                translate.changeLanguage(langCode)
+                // 翻译到指定语言
+                window.translate.changeLanguage(langCode)
                 setCurrentLang(langName)
             }
+        } else {
+            console.warn('translate.js 尚未加载完成')
         }
         setIsOpen(false)
     }
@@ -50,8 +73,8 @@ const TranslateButton = ({ className }) => {
         <div className={`${className || ''} relative`} ref={dropdownRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className='flex items-center gap-1 cursor-pointer hover:scale-110 transform duration-200 dark:text-gray-200 text-gray-800'
-                title='翻译页面'
+                className={`flex items-center gap-1 cursor-pointer hover:scale-110 transform duration-200 dark:text-gray-200 text-gray-800 ${!isReady ? 'opacity-50' : ''}`}
+                title={isReady ? '翻译页面' : '翻译功能加载中...'}
             >
                 {/* 翻译图标 */}
                 <svg
