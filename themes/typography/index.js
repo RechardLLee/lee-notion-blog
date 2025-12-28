@@ -71,9 +71,9 @@ const LayoutBase = props => {
       <div
         id='theme-typography'
         className={`${siteConfig('FONT_STYLE')} font-typography h-screen flex flex-col dark:text-gray-300 bg-white dark:bg-[#232222] overflow-hidden relative`}>
-        {/* 流星动画背景 - 仅深色模式显示 */}
-        <div className='hidden dark:block pointer-events-none'>
-          <Meteors number={15} minDuration={3} maxDuration={8} className='text-slate-400' />
+        {/* 流星动画背景 */}
+        <div className='pointer-events-none'>
+          <Meteors number={15} minDuration={3} maxDuration={8} className='text-slate-400 dark:text-slate-400' />
         </div>
         <Style />
 

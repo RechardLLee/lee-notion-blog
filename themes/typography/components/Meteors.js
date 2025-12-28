@@ -15,39 +15,39 @@ import { useEffect, useState } from 'react'
  * @returns {JSX.Element}
  */
 export default function Meteors({
-    number = 20,
-    minDelay = 0.2,
-    maxDelay = 1.2,
-    minDuration = 2,
-    maxDuration = 10,
-    angle = 215,
-    className = ''
+  number = 20,
+  minDelay = 0.2,
+  maxDelay = 1.2,
+  minDuration = 2,
+  maxDuration = 10,
+  angle = 215,
+  className = ''
 }) {
-    const [meteors, setMeteors] = useState([])
+  const [meteors, setMeteors] = useState([])
 
-    useEffect(() => {
-        const meteorArray = Array.from({ length: number }, (_, i) => {
-            // 根据角度调整起始位置，确保流星能从屏幕边缘外开始
-            const leftPosition = Math.random() * 140 - 20 // 从-20%到120%
-            const topPosition = Math.random() * 40 - 20 // 从-20px到20px的随机高度
+  useEffect(() => {
+    const meteorArray = Array.from({ length: number }, (_, i) => {
+      // 根据角度调整起始位置，确保流星能从屏幕边缘外开始
+      const leftPosition = Math.random() * 140 - 20 // 从-20%到120%
+      const topPosition = Math.random() * 40 - 20 // 从-20px到20px的随机高度
 
-            return {
-                id: i,
-                delay: Math.random() * (maxDelay - minDelay) + minDelay,
-                duration: Math.random() * (maxDuration - minDuration) + minDuration,
-                left: `${leftPosition}%`,
-                top: `${topPosition}px`,
-                animationDelay: `${Math.random() * (maxDelay - minDelay) + minDelay}s`,
-                animationDuration: `${Math.random() * (maxDuration - minDuration) + minDuration}s`
-            }
-        })
-        setMeteors(meteorArray)
-    }, [number, minDelay, maxDelay, minDuration, maxDuration])
+      return {
+        id: i,
+        delay: Math.random() * (maxDelay - minDelay) + minDelay,
+        duration: Math.random() * (maxDuration - minDuration) + minDuration,
+        left: `${leftPosition}%`,
+        top: `${topPosition}px`,
+        animationDelay: `${Math.random() * (maxDelay - minDelay) + minDelay}s`,
+        animationDuration: `${Math.random() * (maxDuration - minDuration) + minDuration}s`
+      }
+    })
+    setMeteors(meteorArray)
+  }, [number, minDelay, maxDelay, minDuration, maxDuration])
 
-    return (
-        <>
-            <style>
-                {`
+  return (
+    <>
+      <style>
+        {`
         @keyframes meteor-fall {
           0% {
             transform: rotate(${angle}deg) translateX(0);
@@ -74,22 +74,22 @@ export default function Meteors({
           background: linear-gradient(90deg, currentColor, transparent);
         }
       `}
-            </style>
-            <div className={`absolute inset-0 overflow-hidden ${className}`}>
-                {meteors.map(meteor => (
-                    <span
-                        key={meteor.id}
-                        className='meteor absolute h-0.5 w-0.5 rounded-full bg-slate-500 shadow-[0_0_0_1px_#ffffff10]'
-                        style={{
-                            top: meteor.top,
-                            left: meteor.left,
-                            animationDelay: meteor.animationDelay,
-                            animationDuration: meteor.animationDuration,
-                            transform: `rotate(${angle}deg)`
-                        }}
-                    />
-                ))}
-            </div>
-        </>
-    )
+      </style>
+      <div className={`absolute inset-0 overflow-hidden ${className}`}>
+        {meteors.map(meteor => (
+          <span
+            key={meteor.id}
+            className='meteor absolute h-0.5 w-0.5 rounded-full bg-slate-600 dark:bg-slate-400 shadow-[0_0_0_1px_#00000010] dark:shadow-[0_0_0_1px_#ffffff10]'
+            style={{
+              top: meteor.top,
+              left: meteor.left,
+              animationDelay: meteor.animationDelay,
+              animationDuration: meteor.animationDuration,
+              transform: `rotate(${angle}deg)`
+            }}
+          />
+        ))}
+      </div>
+    </>
+  )
 }
